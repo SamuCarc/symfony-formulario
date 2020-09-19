@@ -17,6 +17,7 @@
         text-decoration: none;
         justify-content: center;
         transition: all 400ms;
+        cursor: pointer;
     }
 
     .chip:hover {
@@ -50,10 +51,6 @@
         padding-right: 12px;
     }
     
-    .chip-close button {
-        border: none;
-        margin: 0;
-        padding: 0;
-        background: #ffffff00;
-        vertical-align: middle;    
+    .chip-close {
+        z-index:1000;
     }

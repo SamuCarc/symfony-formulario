@@ -34,7 +34,7 @@ class UsersController extends AbstractController
                 // Comprobamos si existe el usuario
                 $usuarioExiste = $repository->findOneBy(['email' => $em]);
                 if (!$usuarioExiste) {
-                    // No existe: Por lo tanto creamos
+                    // No existe: Por lo tanto lo creamos
                     $user = new Users($nom,$ape,$em,$tel);
                     $entityManager->persist($user);
                     $entityManager->flush();
@@ -68,6 +68,7 @@ class UsersController extends AbstractController
         }
         $todosUsuarios = $this->obtenerTodosUsuarios($repository);
 
+        // Devolvemos todos los datos al front
         return $this->render('users/index.html.twig', [
             'controller_name' => 'UsersController',
             'mensaje' => $mensaje,
@@ -85,8 +86,10 @@ class UsersController extends AbstractController
         foreach ($allUsers as $row) {
             $nombreApellidos = $row->getNombre()." ".$row->getApellidos();
             $arrayUsers[$i]["content"] = $row->getEmail()." (". $nombreApellidos .")"; 
-            $arrayUsers[$i]["id"] = $row->getId(); 
             $arrayUsers[$i]["email"] = $row->getEmail(); 
+            $arrayUsers[$i]["nombre"] = $row->getNombre(); 
+            $arrayUsers[$i]["apellidos"] = $row->getApellidos(); 
+            $arrayUsers[$i]["telefono"] = $row->getTelefono(); 
             $i++;
         }
         return $arrayUsers;

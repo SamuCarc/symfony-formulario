@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}PRUEBA!{% endblock %}
+{% block title %}PRUEBA CUCORENT!{% endblock %}
 
 
 {% block body %}
@@ -30,15 +30,18 @@
         <p id="alert" class="text-danger"></p>
     </form>
 
+    {# Visualizar Usuarios y poder borrarlos: Si das en el botón llenas el formulario... #} 
+    {# ... con los datos del usuario, si das a la X los borras #} 
     {% for usuario in todosUsuarios %}
     <div class="chip waves-effect waves-effect pr-2 mt-1">
-        <div class="chip-head">{{ usuario.content[0:2]|capitalize }}</div>
+        <input id="datos-usuario" type="hidden" email="{{usuario.email}}" nombre="{{usuario.nombre}}" apellidos="{{usuario.apellidos}}" telefono="{{usuario.telefono}}">
+        <div class="chip-head">{{ usuario.content[0:2]|upper }}</div>
         <div class="chip-content">{{ usuario.content }}</div>
-        <div class="chip-close">
-        <form id="hidden-delete-form" method="POST" action="/" >
-            <input value={{ usuario.email }} type="hidden" id="delete-email" name="delete-email">
-            <button><i class="close fas fa-times"></i></button>
-        </form>
+        <div id="delete-user-{{ usuario.email }}" class="chip-close">
+            <i class="close fas fa-times"></i>
+            <form id="hidden-delete-form" method="POST" action="/" >
+                <input value={{ usuario.email }} type="hidden" id="delete-email" name="delete-email">
+            </form>
         </div>
     </div>
     {% endfor %}
@@ -55,6 +58,7 @@
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
     }
 
+    // Clickamos el boton del formulario
     function onSubmit(token) {
         $("#token").val(token);
         $("#action").val('submit');
@@ -63,7 +67,8 @@
         var n = $("#nombre").val();
         var a = $("#apellidos").val();
         var e = $("#email").val();
-        var t = $("#telefono").val()
+        var t = $("#telefono").val();
+        // Comprueba los campos del formulario 
         if ( n=="" || e=="" || a=="") {
             $("#alert").text("No puede estar vacío ningún campo obligatorio");
             return;
@@ -79,6 +84,26 @@
         $("#formulario").submit();
     }
 
+    // Rellenar el formulario con los datos del usuario clickado s
+    $(".chip").click(function(e){
+        var datos = $(this).children("#datos-usuario");
+
+        $("#nombre").val(datos.attr("nombre"));
+        $("#apellidos").val(datos.attr("apellidos"));
+        $("#email").val(datos.attr("email"));
+        $("#telefono").val(datos.attr("telefono"));
+    })
+
+    // Borrar usuario
+    $("div[id ^= delete-user-]").click(function(e){
+
+        var form = $(this).children("#hidden-delete-form");
+        var email = $(this).siblings("#datos-usuario").attr("email");
+        var confirmar = confirm("Seguro que desea borrar el usuario: "+ email);
+        if (confirmar) {
+            form.submit();
+        }
+    })
 
 </script>
 {% endblock %}
