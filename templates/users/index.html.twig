@@ -1,0 +1,84 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}PRUEBA!{% endblock %}
+
+
+{% block body %}
+{{ parent() }}
+<div class="d-flex justify-content-center my-5">
+ <div style="width:400px">
+    {# Formulario de creacion o edicion #}
+    {# El email de cada usuario es único #}
+    <form id="formulario" method="POST" action="/" class="text-center border border-light p-5">
+    <p class="text-success font-weight-bold">{{ mensaje }}</p>
+
+        <p class="h4 mb-4">Crear/Actualizar usuario</p>
+        <input type="email" id="email" name="email"  class="form-control mb-4" placeholder="*Email">
+        <input type="text" id="nombre" name="nombre"  class="form-control mb-4" placeholder="*Nombre">
+        <input type="text" id="apellidos" name="apellidos"  class="form-control mb-4" placeholder="*Apellidos">
+        <input type="number" id="telefono" name="telefono"  class="form-control mb-4" placeholder="Telefono">
+
+        <input type="hidden" id="token" name="token">
+        <input type="hidden" id="action" name="action">
+
+        <button class="g-recaptcha btn btn-info btn-block my-4"
+            data-sitekey="6Lcj880ZAAAAAI0a2fkGapo4sp90X-KAXEF0_zqa" 
+            data-callback='onSubmit' 
+            data-action='submit'>
+            Crear/Actualizar
+        </button>
+        <p id="alert" class="text-danger"></p>
+    </form>
+
+    {% for usuario in todosUsuarios %}
+    <div class="chip waves-effect waves-effect pr-2 mt-1">
+        <div class="chip-head">{{ usuario.content[0:2]|capitalize }}</div>
+        <div class="chip-content">{{ usuario.content }}</div>
+        <div class="chip-close">
+        <form id="hidden-delete-form" method="POST" action="/" >
+            <input value={{ usuario.email }} type="hidden" id="delete-email" name="delete-email">
+            <button><i class="close fas fa-times"></i></button>
+        </form>
+        </div>
+    </div>
+    {% endfor %}
+    </div>
+</div>
+
+
+
+{% endblock %}
+{% block javascripts %}
+{{ parent() }}
+<script>
+    function emailIsValid (email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+    }
+
+    function onSubmit(token) {
+        $("#token").val(token);
+        $("#action").val('submit');
+        console.log(token);
+
+        var n = $("#nombre").val();
+        var a = $("#apellidos").val();
+        var e = $("#email").val();
+        var t = $("#telefono").val()
+        if ( n=="" || e=="" || a=="") {
+            $("#alert").text("No puede estar vacío ningún campo obligatorio");
+            return;
+        }
+        if (t.length > 0 && t.length < 6 ) {
+            $("#alert").text("El número de teléfono debe ser mayor a 5 digitos");
+            return;
+        }
+        if ( !emailIsValid(e) ) {
+            $("#alert").text("El email introducido no es válido");
+            return;
+        }
+        $("#formulario").submit();
+    }
+
+
+</script>
+{% endblock %}
